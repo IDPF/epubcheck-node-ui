@@ -1,0 +1,27 @@
+#########################
+####       Node      ####
+#########################
+npm-debug.log
+
+# Node.js dependencies pulled in using npm
+node_modules/
+
+# temp folder created by server
+node_server/temp
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+
+#vim files
+.*.sw?
+.*~
+
+#Webstorm files
+.idea
