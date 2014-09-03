@@ -4,13 +4,11 @@ EpubCheck Node UI
 The node server provides a simple UI that wraps epubcheck.  
 
 ## Setup
-To setup the server:
 ```
 $ npm install.
 ```
 
 ## Running
-To run the server type 
 ```
 $ node checkserver.js
 ```
@@ -28,4 +26,4 @@ If you need to update the version of epubcheck that the server is using run:
 ```
 ant clean setup -Depubcheck.version=nnnnn
 ```
-This will compy the necessary dependencies into the epubcheck folder.  After the update has been made the changes will need to be checked in.
+This will copy the necessary dependencies into the epubcheck folder.  After the update has been made the changes will need to be checked in.
