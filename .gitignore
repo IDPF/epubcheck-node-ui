@@ -9,6 +9,9 @@ node_modules/
 # temp folder created by server
 node_server/temp
 
+# target directory
+target/
+
 # OS Files
 .DS_Store
 .DS_Store?
@@ -25,3 +28,6 @@ Thumbs.db
 
 #Webstorm files
 .idea
+
+#compiled python
+*.pyc

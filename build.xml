@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 
-<project name="books" default="standalone" basedir="." xmlns:artifact="antlib:org.apache.artifact.ant">
+<project name="epubcheck-node-ui" default="standalone" basedir="." xmlns:artifact="antlib:org.apache.artifact.ant">
   <description>
-    Manage dependencies and run tests for the node server
+    Manage the dependency on epubcheck
   </description>
 
   <!-- NOTES:
@@ -10,142 +10,56 @@
         resulting in memory leakage of classes from macros.
   -->
   <!-- ******************************************************************** -->
-  <!-- ************************* Common User-facing Targets  ************************* -->
+  <!-- ***************** Common User-facing Targets  ********************** -->
   <!-- ******************************************************************** -->
 
   <target name="help">
-    <echo message="Use 'ant -p' to get descriptions of available targets.  Use 'ant -h' for ant options." />
-  </target>
-
-  <target name="_help-properties"
-      description="Help for configuration properties"
-      depends="-help-properties" />
-  <target name="help-properties" depends="-help-properties" />
-
-  <target name="_help-targets"
-      description="Help on these targets and additional targets"
-      depends="-help-targets" />
-  <target name="help-targets" depends="-help-targets" />
+    <echo message="Use this script to update the version of epubcheck.  For example to use the v4.0.0-alpha9 version run 'ant setup -Depubcheck.version=v4.0.0-alpha9'" />
+  </target>  
 
   <target name="setup"
-      description="Calls npm install and imports epubcheck"
+      description="Imports epubcheck"
       depends="-setup" />
-
+      
   <target name="clean"
       description="Deletes the node_modules and target directories."
       depends="-clean" />
-
-  <target name="test"
-      description="Calls npm test which uses grunt to test the server."
-      depends="-test" />
-
-  <target name="build"
-      description="No-op.  There is currently nothing to build."
-      depends="-build" />
-
-  <target name="server"
-      description="Start the server."
-      depends="-server" />
-
-  <target name="verify"
-      description="(setup,build,test) End to end"
-      depends="-verify" />
-
-  <target name="install"
-      description="no-op. Nothing to install"
-      depends="" />
-
-  <!-- Generally only used by jenkins release build -->
-  <target name="deploy"
-      depends="" />
-
+  
   <!-- ******************************************************************** -->
-  <!-- ************************* Local User-facing Targets  ************************* -->
+  <!-- ************************* Properties  ****************************** -->
   <!-- ******************************************************************** -->
-
-
-  <!-- ******************************************************************** -->
-  <!-- ************************* Common Properties  ************************* -->
-  <!-- ******************************************************************** -->
-
   <property name="root.build" value="${basedir}/build" />
-
-  <!-- ******************************************************************** -->
-  <!-- ************************* Local Properties  ************************* -->
-  <!-- ******************************************************************** -->
-
+  <property name="epubcheck.version" value="v4.0.0-alpha9" />
 
   <!-- ******************************************************************** -->
   <!-- ************************* Library Targets  ************************* -->
   <!-- ******************************************************************** -->
-
-  <target name="-help-properties">
-    <echo message="TODO: Coming soon..." />
-  </target>
-
-  <target name="-help-targets">
-    <echo message="TODO: Coming soon..." />
-  </target>
-
+ 
   <target name="-clean">
     <delete includeemptydirs="true">
-      <fileset dir="${basedir}/target"
-                erroronmissingdir="false"
-                defaultexcludes="false" />
-      <fileset dir="${basedir}/node_modules"
+      <fileset dir="${basedir}/epubcheck"
                 erroronmissingdir="false"
                 defaultexcludes="false" />
     </delete>
   </target>
 
-  <target name="-build" depends="">
-  </target>
-
-  <target name="-test" depends="-use-exec-with-summary">
-    <ExecWithSummary id="npm-test" executable="bash">
-      <args>
-        <arg value="${root.build}/npm.sh"/>
-        <arg value="test"/>
-      </args>
-    </ExecWithSummary>
-  </target>
-
-  <target name="-server" depends="-use-exec-with-summary">
-    <ExecWithSummary id="npm-test" executable="bash">
-      <args>
-        <arg value="${root.build}/npm.sh"/>
-        <arg value="start"/>
-      </args>
-    </ExecWithSummary>
-  </target>
-
-  <target name="-verify" depends="-setup,-build,-test">
-  </target>
-
-  <target name="-setup" depends="-use-ant-contrib,-use-exec-with-summary">
-
+ 
+  <target name="-setup" depends="-use-ant-contrib">
     <artifact:dependencies filesetId="dependency.fileset">
-      <dependency groupId="org.idpf" artifactId="epubcheck" version="v4.0.0-alpha9" classifier="dist" type="zip"/>
+      <dependency groupId="org.idpf" artifactId="epubcheck" version="${epubcheck.version}" classifier="dist" type="zip"/>
     </artifact:dependencies>
     
-    <copy todir="${basedir}/target" flatten="true">
+    <copy todir="${basedir}/epubcheck" flatten="true">
       <zipfileset src="${org.idpf:epubcheck:zip:dist}" >
-        <!--<include name="**/lib/*"/>-->
         <include name="*/epubcheck.jar"/>
         <include name="*/*.py"/>
       </zipfileset>
     </copy>
-    <copy todir="${basedir}/target/lib" flatten="true">
+    <copy todir="${basedir}/epubcheck/lib" flatten="true">
       <zipfileset src="${org.idpf:epubcheck:zip:dist}" >
         <include name="*/lib/*"/>
       </zipfileset>
     </copy>
-    <ExecWithSummary id="npm-install" executable="bash">
-      <args>
-        <arg value="${root.build}/npm.sh"/>
-        <arg value="install"/>
-      </args>
-    </ExecWithSummary>
   </target>
 
 
@@ -168,113 +82,4 @@
     <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="ant-contrib.classpath" />
   </target>
 
-  <target name="-use-exec-with-summary" depends="-use-ant-contrib">
-    <property name="logsdir" value="${basedir}/target/logs" />
-    <mkdir dir="${logsdir}" />
-    <macrodef name="ExecWithSummary">
-      <attribute name="id"/>
-      <attribute name="dir" default="${basedir}"/>
-      <attribute name="executable" />
-      <attribute name="classname" default="" />
-      <attribute name="showOutputStreamed" default="false" />
-      <attribute name="showOutputOnSuccess" default="false" />
-      <attribute name="showOutputOnFailure" default="true" />
-      <attribute name="logfile" default="${logsdir}/@{id}.txt" />
-      <element name="args" optional="true"/>
-      <element name="failureconditions" optional="true"/>      
-      <sequential>
-        <tstamp>
-          <format property="@{id}.start" pattern="hh:mm:ss"/>
-        </tstamp>
-        <echo message="[${@{id}.start}] @{id}: Starting..."  />
-        <if>
-          <equals arg1="@{executable}" arg2="java" />
-          <then>
-            <if>
-              <isfalse value="@{showOutputStreamed}" />
-              <then>
-                <java classname="@{classname}"  fork="true" resultproperty="exec.@{id}.result" output="@{logfile}">
-                  <args />
-                  <classpath refid="dependency.classpath" />
-                  <jvmarg value="-Djava.awt.headless=true"/>
-                </java>
-              </then>
-              <else>
-                <java classname="@{classname}" fork="true" resultproperty="exec.@{id}.result">
-                  <args />
-                  <classpath refid="dependency.classpath" />
-                 <jvmarg value="-Djava.awt.headless=true"/>
-                 </java>
-              </else>
-            </if>
-          </then>
-          <else>
-            <if>
-              <isfalse value="@{showOutputStreamed}" />
-              <then>
-                <exec executable="@{executable}" dir="@{dir}" resultproperty="exec.@{id}.result" output="@{logfile}">
-                  <args />
-                </exec>
-              </then>
-              <else>
-                <exec executable="@{executable}" dir="@{dir}" resultproperty="exec.@{id}.result">
-                  <args />
-                </exec>
-              </else>
-            </if>
-          </else>
-        </if>
-
-        <!-- It costs some memory to always load the output, but it is cleaner and -->
-        <!-- allows failure conditions to test the output. -->
-        <if>
-          <and>
-            <isfalse value="@{showOutputStreamed}" />
-            <or>
-              <istrue value="@{showOutputOnSuccess}" />
-              <istrue value="@{showOutputOnFailure}" />
-            </or>
-          </and>
-          <then>
-            <!-- quiet="true" means that the property will quietly not be set if the file is missing or empty. -->
-            <loadfile srcFile="@{logfile}" property="exec.@{id}.output" quiet="true"/>
-          </then>
-        </if>
-
-        <if>
-          <or>
-            <isfailure code="${exec.@{id}.result}" />
-            <failureconditions />
-          </or>
-          <then>
-            <if>
-              <istrue value="@{showOutputOnFailure}" />
-              <then>
-                <echo message=" ====!!!!==== " />
-                <echo message=" Output for step: @{id}" />
-                <echo message=" ====!!!!==== " />
-                <echo message="${exec.@{id}.output}${line.separator}"  />
-                <echo message=" ====!!!!==== " />
-              </then>
-            </if>
-            <fail message=" ====!!!!==== ${line.separator} ====!!!!==== @{id}: FAILED. EXITCODE=${exec.@{id}.result} ${line.separator} ====!!!!==== FAILURE LOG FILE: '@{logfile}'${line.separator} ====!!!!==== ${line.separator}" />
-          </then>
-          <elseif>
-            <istrue value="@{showOutputOnSuccess}" />
-            <then>
-              <echo message=" ====!!!!==== " />
-              <echo message=" Output for step: @{id}" />
-              <echo message=" ====!!!!==== " />
-              <echo message="${exec.@{id}.output}${line.separator}"  />
-              <echo message=" ====!!!!==== " />
-            </then>
-          </elseif>
-        </if>
-        <tstamp>
-          <format property="@{id}.end" pattern="hh:mm:ss"/>
-        </tstamp>
-        <echo message="[${@{id}.end}] @{id}: Succeeded."  />
-      </sequential>
-    </macrodef>
-  </target>
 </project>

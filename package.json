@@ -1,6 +1,6 @@
 {
-  "name": "com.adobe.epubcheck",
-  "version": "0.0.0",
+  "name": "epubcheck-node-ui",
+  "version": "1.0.0",
   "description": "Server for checking epub files",
   "main": "node_server/checkserver.js",
   "dependencies": {
@@ -23,8 +23,24 @@
     "start": "node ./node_server/checkserver.js",
     "test": "node ./node_modules/mocha/bin/mocha --reporter tap --timeout 30s ./node_server/test/checkserver_test.js"
   },
-  "repository": "",
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/IDPF/epubcheck-node-ui"
+  },
+  "bugs": {
+    "url": "https://github.com/IDPF/epubcheck-node-ui/issues"
+  },
+  "homepage": "https://github.com/IDPF/epubcheck-node-ui",
+  "keywords": [
+    "epubcheck",
+    "idpf",
+    "web",
+    "epub"
+  ],
+  "author": {
+    "name": "Arwen Pond",
+    "email": "apond@book.com"
+  },
   "license": "BSD",
   "readmeFilename": "README.md"
 }

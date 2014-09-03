@@ -14,8 +14,8 @@ var serveStatic = require('serve-static');
 
 var jarFileName = 'epubcheck.jar';
 var compareFileName = 'CompareResultsUtil.py';
-var comparePythonPath = path.join(__dirname, '..', compareFileName);
-var jarFilePath = path.join(__dirname, '..', jarFileName);
+var comparePythonPath = path.join(__dirname, '..', 'epubcheck', compareFileName);
+var jarFilePath = path.join(__dirname, '..', 'epubcheck', jarFileName);
 var debug_output = false;
 
 if (!fs.existsSync(jarFilePath))
@@ -708,7 +708,7 @@ var write_check_messages = function () {
 
 var add_options = function (commander) {
   commander
-    .version('0.0.1')
+    .version('1.0.0')
     .option('-p, --port <port>', 'Run the checkserver on port [port]', 8080)
     .option('-o, --override <file>', 'Use the epubcheck override file specified', null)
 };
