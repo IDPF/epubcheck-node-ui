@@ -125,7 +125,6 @@
   <target name="-setup" depends="-use-ant-contrib,-use-exec-with-summary">
 
     <artifact:dependencies filesetId="dependency.fileset">
-      <!--<artifact:remoteRepository id="nexus-apps" url="https://nexus.bnchalk.com/content/groups/public" />-->
       <dependency groupId="org.idpf" artifactId="epubcheck" version="v4.0.0-alpha9" classifier="dist" type="zip"/>
     </artifact:dependencies>
     
@@ -162,7 +161,6 @@
 
   <target name="-use-ant-contrib">
     <artifact:dependencies pathId="ant-contrib.classpath">
-      <!--<artifact:remoteRepository id="nexus-apps" url="https://nexus.bnchalk.com/content/groups/public" />-->
       <dependency groupId="ant-contrib" artifactId="ant-contrib" version="1.0b3" />
     </artifact:dependencies>
 
