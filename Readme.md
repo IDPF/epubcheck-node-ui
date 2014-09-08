@@ -5,7 +5,7 @@ The node server provides a simple UI that wraps epubcheck.
 
 ## Setup
 ```
-$ npm install.
+$ npm install
 ```
 
 ## Running
@@ -21,7 +21,7 @@ The 'Comparison' Tab is for comparing the output between two versions of the sam
 
 All of the other tabs provide information about the epub selected in the 'Files' tab.
 
-## EpubCheck Version
+## EpubCheck Version (enlistment only)
 If you need to update the version of epubcheck that the server is using run:
 ```
 ant clean setup -Depubcheck.version=nnnnn
