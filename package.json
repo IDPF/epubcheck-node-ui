@@ -1,6 +1,6 @@
 {
   "name": "epubcheck-node-ui",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Server for checking epub files",
   "main": "node_server/checkserver.js",
   "dependencies": {
