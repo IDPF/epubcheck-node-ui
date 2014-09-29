@@ -4,7 +4,7 @@ var path = require('path');
 var socketIO = require('socket.io');
 var express = require('express');
 var spawn = require('child_process').spawn;
-var mkdirp = require('mkdirp');
+var node_fs = require('node-fs');
 var CheckedFile = require('./CheckedFile.js');
 var CheckMessage = require('./CheckMessage.js');
 var lineReader = require('line-reader');
@@ -417,9 +417,9 @@ var run_comparison = function (resultsA, resultsB, callback) {
 };
 
 var initialize_directories = function () {
-  mkdirp.sync(epubDirectory);
-  mkdirp.sync(diffDirectory);
-  mkdirp.sync(uploadDirectory);
+  node_fs.mkdirSync(epubDirectory, 0777, true);
+  node_fs.mkdirSync(diffDirectory, 0777, true);
+  node_fs.mkdirSync(uploadDirectory, 0777, true);
   initialize_checked_epubs();
 };
 
