@@ -18,20 +18,6 @@ var comparePythonPath = path.join(__dirname, '..', 'epubcheck', compareFileName)
 var jarFilePath = path.join(__dirname, '..', 'epubcheck', jarFileName);
 var debug_output = false;
 
-if (!fs.existsSync(jarFilePath))
-{
-  console.warn('Could not find ' + jarFilePath + '.');
-  jarFilePath = path.join(__dirname, '../target', jarFileName);
-  comparePythonPath = path.join(__dirname, '../target', compareFileName);
-  console.warn('Trying local build path ' + jarFilePath + '...');
-}
-
-if (!fs.existsSync(jarFilePath))
-{
-  console.error('Could not find ' + jarFilePath + '!  Exiting.');
-  process.exit(1);
-}
-
 var checkedFiles = [];
 var checkMessages = [];
 var io;
@@ -44,12 +30,14 @@ var checkMessageOverrideFile = path.join(epubDirectory, 'CheckMessages.txt');
  *
  * @param port - The port number the server should listen too
  * @param override - The file used to override epubcheck messages.
+ * @param epubcheck_path - The folder for the epubcheck jar file
  * @param express_app - This needs to be provided when you want to extend your server with the server so you don't have to proxy
  * @param http_server - When supplying the express_app you need to also specify the http server
  * @param root - The root path used for responding with index.html
  * @returns {*}
  */
-var main = function (port, override, express_app, http_server, root) {
+var main = function (port, override, epubcheck_path, express_app, http_server, root) {
+  initialize_epubcheck_jar_path(epubcheck_path);
   initialize_directories();
   var initialize_check_messages = function () {
     fs.exists(checkMessageOverrideFile, function (exists) {
@@ -125,6 +113,21 @@ var main = function (port, override, express_app, http_server, root) {
   server.epubDir = epubDirectory;
   server.diffDir = diffDirectory;
   return server;
+};
+
+var initialize_epubcheck_jar_path = function(epubcheck_path){
+  if (fs.existsSync(epubcheck_path))
+  {
+    jarFilePath = path.join(epubcheck_path, jarFileName);
+    comparePythonPath = path.join(epubcheck_path, compareFileName);
+  }
+
+  if (!fs.existsSync(jarFilePath))
+  {
+    console.error('Could not find ' + jarFilePath + '!  Exiting.');
+    process.exit(1);
+  }
+  console.log('Using epubcheck found at ' + jarFilePath);
 };
 
 var configure_app = function(app, opt_root)
@@ -711,13 +714,14 @@ var add_options = function (commander) {
     .version('1.0.0')
     .option('-p, --port <port>', 'Run the checkserver on port [port]', 8080)
     .option('-o, --override <file>', 'Use the epubcheck override file specified', null)
+    .option('-e, --epubcheck <file>', 'The location of the epubcheck jar file', null)
 };
 
 if (require.main === module)
 {
   add_options(program);
   program.parse(process.argv);
-  main(program.port, program.override);
+  main(program.port, program.override, program.epubcheck);
 }
 
 module.exports.main = main;
